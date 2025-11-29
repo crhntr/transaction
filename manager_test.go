@@ -25,7 +25,7 @@ func TestManager(t *testing.T) {
 
 		m := transaction.NewManager(conn)
 
-		err := m.Call(ctx, pgx.TxOptions{}, f.Spy)
+		err := m.Wrap(ctx, pgx.TxOptions{}, f.Spy)
 
 		require.NoError(t, err)
 		require.Equal(t, 1, tx.CommitCallCount())
@@ -43,7 +43,7 @@ func TestManager(t *testing.T) {
 		conn.BeginTxReturns(tx, fmt.Errorf("banana"))
 
 		m := transaction.NewManager(conn)
-		err := m.Call(ctx, pgx.TxOptions{}, f.Spy)
+		err := m.Wrap(ctx, pgx.TxOptions{}, f.Spy)
 
 		require.ErrorContains(t, err, "banana")
 		require.Zero(t, tx.CommitCallCount())
@@ -62,7 +62,7 @@ func TestManager(t *testing.T) {
 		f.Returns(fmt.Errorf("banana"))
 
 		m := transaction.NewManager(conn)
-		err := m.Call(ctx, pgx.TxOptions{}, f.Spy)
+		err := m.Wrap(ctx, pgx.TxOptions{}, f.Spy)
 
 		require.ErrorContains(t, err, "banana")
 		require.Equal(t, 1, tx.RollbackCallCount())
@@ -79,7 +79,7 @@ func TestManager(t *testing.T) {
 		f.Calls(func(context.Context, pgx.Tx) error { panic("lemon") })
 
 		m := transaction.NewManager(conn)
-		err := m.Call(ctx, pgx.TxOptions{}, f.Spy)
+		err := m.Wrap(ctx, pgx.TxOptions{}, f.Spy)
 
 		require.ErrorContains(t, err, ": lemon")
 		require.Equal(t, 1, tx.RollbackCallCount())
@@ -97,7 +97,7 @@ func TestManager(t *testing.T) {
 		})
 
 		m := transaction.NewManager(conn)
-		err := m.Call(ctx, pgx.TxOptions{}, f.Spy)
+		err := m.Wrap(ctx, pgx.TxOptions{}, f.Spy)
 
 		require.ErrorContains(t, err, "lemon")
 		require.Equal(t, 1, tx.RollbackCallCount())
@@ -122,7 +122,7 @@ func TestManager(t *testing.T) {
 		})
 
 		m := transaction.NewManager(conn)
-		err := m.Call(ctx, pgx.TxOptions{}, f.Spy)
+		err := m.Wrap(ctx, pgx.TxOptions{}, f.Spy)
 
 		require.ErrorContains(t, err, "banana")
 		require.ErrorContains(t, err, "lemon")
@@ -145,7 +145,7 @@ func TestManager(t *testing.T) {
 		f.Calls(func(ctx context.Context, tx pgx.Tx) error { return errors.New("banana") })
 
 		m := transaction.NewManager(conn)
-		err := m.Call(ctx, pgx.TxOptions{}, f.Spy)
+		err := m.Wrap(ctx, pgx.TxOptions{}, f.Spy)
 
 		require.ErrorContains(t, err, "banana")
 		require.ErrorContains(t, err, "lemon")

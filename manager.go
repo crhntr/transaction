@@ -22,7 +22,7 @@ func NewManager(conn Beginner) *Manager {
 	return &Manager{conn: conn}
 }
 
-func (t Manager) Call(ctx context.Context, options pgx.TxOptions, f Func) error {
+func (t Manager) Wrap(ctx context.Context, options pgx.TxOptions, f Func) error {
 	var recoverErr error
 	return errors.Join(func() error {
 		tx, err := t.conn.BeginTx(ctx, options)
