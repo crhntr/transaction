@@ -44,3 +44,8 @@ func (t Manager) Wrap(ctx context.Context, options pgx.TxOptions, f Func) error 
 		return tx.Commit(ctx)
 	}(), recoverErr)
 }
+
+// Deprecated: use Wrap instead
+func (t Manager) Call(ctx context.Context, options pgx.TxOptions, f Func) error {
+	return t.Wrap(ctx, options, f)
+}
