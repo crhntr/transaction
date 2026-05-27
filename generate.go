@@ -1,6 +1,6 @@
 package transaction
 
-//go:generate go run github.com/maxbrunsfeld/counterfeiter/v6 -generate
+//go:generate go tool counterfeiter -generate
 
 //counterfeiter:generate -o internal/fake/tx.go --fake-name Tx github.com/jackc/pgx/v5.Tx
 
